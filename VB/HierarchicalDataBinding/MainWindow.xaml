@@ -1,0 +1,49 @@
+﻿<Window x:Class="HierarchicalDataBinding.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+        xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+        xmlns:local="clr-namespace:HierarchicalDataBinding"
+        Title="MainWindow" Height="450" Width="700">
+    <Window.Resources>
+        <ResourceDictionary>
+            <local:ViewModel x:Key="viewModel" />
+            <local:CustomChildrenSelector x:Key="childrenSelector" />
+            <Style TargetType="{x:Type dxg:RowMarginControl}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Grid>
+                                <Path x:Name="PART_OffsetPath" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1"/>
+                                <Path x:Name="PART_TreeLinePath" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1" />
+                                <dxe:CheckEdit IsChecked="{Binding Row.Checked, Mode=TwoWay}"
+                                       Checked="CheckEdit_Checked"
+                                       Unchecked="CheckEdit_Unchecked"
+                                       VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,2,0" />
+                                <dxg:TreeListNodeExpandButton x:Name="PART_ExpandButton" VerticalAlignment="Center" HorizontalAlignment="Left" 
+                                                              Command="{Binding View.Commands.ChangeNodeExpanded}" CommandParameter="{Binding RowHandle.Value}"
+                                                               IsExpandButtonVisible="{Binding Path=IsButtonVisible}"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <dxg:TreeListControl x:Name="treeList" ItemsSource="{Binding DataItems}" DataContext="{StaticResource viewModel}">
+            <dxg:TreeListControl.Columns>
+                <dxg:TreeListColumn FieldName="Name" AllowSorting="True" />
+                <dxg:TreeListColumn FieldName="Executor" AllowSorting="True" />
+                <dxg:TreeListColumn FieldName="State" AllowSorting="True" />
+            </dxg:TreeListControl.Columns>
+            <dxg:TreeListControl.View>
+                <dxg:TreeListView x:Name="view" TreeDerivationMode="ChildNodesSelector" 
+                                  
+                                  ChildNodesSelector="{StaticResource childrenSelector}"
+                                  ShowNodeImages="True" />
+            </dxg:TreeListControl.View>
+        </dxg:TreeListControl>
+    </Grid>
+</Window>
